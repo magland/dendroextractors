@@ -78,14 +78,14 @@ def read_file_from_backend(
             raise RuntimeError(f"{file_path} is not a valid HDF5 file!")
 
     elif stream_mode == "dendro":
-        from dendro.sdk import get_file_for_project_file_uri
+        from dendro.sdk import get_project_file_from_uri
         import h5py
 
         assert file_path is not None, "file_path must be specified when using stream_mode='dendro'"
         if not str(file_path).startswith('dendro:?'):
             raise Exception(f"Invalid dendro project file URI: {file_path}")
-        remf = get_file_for_project_file_uri(str(file_path))
-        open_file = h5py.File(remf, "r")
+        ff = get_project_file_from_uri(str(file_path))
+        open_file = h5py.File(ff, "r")
 
     elif stream_mode == "zarr":
         import zarr
