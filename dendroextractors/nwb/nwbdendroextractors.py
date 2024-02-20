@@ -901,7 +901,8 @@ class NwbDendroRecordingSegment(BaseRecordingSegment):
         end_frame: int | None = None,
         channel_indices=None
     ):
-        print(f'get_traces called with start_frame = {start_frame}, end_frame = {end_frame}, num. channel indices = {len(channel_indices) if channel_indices else None}')
+        print(f'get_traces called with start_frame = {start_frame}, end_frame = {end_frame}')
+        print(f'channel_indices = {channel_indices}')
         try:
             traces = self.get_traces_try(start_frame, end_frame, channel_indices)
             return traces
