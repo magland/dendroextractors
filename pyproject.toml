@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dendroextractors"
-version = "0.1.8"
+version = "0.1.9"
 description = ""
 authors = ["Jeremy Magland <jmagland@flatironinstitute.org>"]
 readme = "README.md"
