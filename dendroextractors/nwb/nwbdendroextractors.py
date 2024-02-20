@@ -901,7 +901,7 @@ class NwbDendroRecordingSegment(BaseRecordingSegment):
         end_frame: int | None = None,
         channel_indices=None
     ):
-        try_delays_sec = [0.01, 0.1, 0.2, 1]
+        try_delays_sec = [0.01 + _jitter(0.005), 0.1 + _jitter(0.05), 0.2 + _jitter(0.1), 1 + _jitter(0.5)]
         for ii, delay_sec in enumerate(try_delays_sec):
             try:
                 traces = self.get_traces_try(start_frame=start_frame, end_frame=end_frame, channel_indices=channel_indices)
@@ -938,6 +938,11 @@ class NwbDendroRecordingSegment(BaseRecordingSegment):
                 traces = electrical_series_data[start_frame:end_frame, channel_indices]
 
         return traces
+
+
+def _jitter(max_jitter):
+    from random import random
+    return max_jitter * (random() * 2 - 1)
 
 
 read_nwb_recording = define_function_from_class(source_class=NwbDendroRecordingExtractor, name="read_nwb_recording")
