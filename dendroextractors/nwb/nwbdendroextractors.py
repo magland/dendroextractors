@@ -9,6 +9,8 @@ from spikeinterface import get_global_tmp_folder
 from spikeinterface.core import BaseRecording, BaseRecordingSegment
 from spikeinterface.core.core_tools import define_function_from_class
 
+import time
+
 
 def import_lazily():
     "Makes annotations / typing available lazily"
@@ -893,7 +895,26 @@ class NwbDendroRecordingSegment(BaseRecordingSegment):
         """
         return self._num_samples
 
-    def get_traces(self, start_frame, end_frame, channel_indices):
+    def get_traces(
+        self,
+        start_frame: int | None = None,
+        end_frame: int | None = None,
+        channel_indices=None
+    ):
+        try_delays_sec = [0.01, 0.1, 0.2, 1]
+        for ii, delay_sec in enumerate(try_delays_sec):
+            try:
+                traces = self.get_traces_try(start_frame=start_frame, end_frame=end_frame, channel_indices=channel_indices)
+                return traces
+            except Exception as e:
+                if ii == len(try_delays_sec) - 1:
+                    raise
+                else:
+                    print(f"Error in get_traces: {e}. Trying again in {delay_sec} sec...")
+                    time.sleep(delay_sec)
+        raise Exception('Impossible.')
+
+    def get_traces_try(self, start_frame, end_frame, channel_indices):
         if start_frame is None:
             start_frame = 0
         if end_frame is None:
