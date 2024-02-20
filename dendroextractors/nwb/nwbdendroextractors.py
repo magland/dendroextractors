@@ -901,18 +901,16 @@ class NwbDendroRecordingSegment(BaseRecordingSegment):
         end_frame: int | None = None,
         channel_indices=None
     ):
-        try_delays_sec = [0.01 + _jitter(0.005), 0.1 + _jitter(0.05), 0.2 + _jitter(0.1), 1 + _jitter(0.5)]
-        for ii, delay_sec in enumerate(try_delays_sec):
-            try:
-                traces = self.get_traces_try(start_frame=start_frame, end_frame=end_frame, channel_indices=channel_indices)
-                return traces
-            except Exception as e:
-                if ii == len(try_delays_sec) - 1:
-                    raise
-                else:
-                    print(f"Error in get_traces: {e}. Trying again in {delay_sec} sec...")
-                    time.sleep(delay_sec)
-        raise Exception('Impossible.')
+        print(f'get_traces called with start_frame = {start_frame}, end_frame = {end_frame}, num. channel indices = {len(channel_indices) if channel_indices else None}')
+        try:
+            traces = self.get_traces_try(start_frame, end_frame, channel_indices)
+            return traces
+        except Exception as e:
+            print(f"Error when trying to get traces: {e}")
+            print(f'start_frame = {start_frame}, end_frame = {end_frame}, channel_indices = {channel_indices}')
+            print(f'num_samples = {self.get_num_samples()}')
+            print(f'electrical_series_data.shape = {self.electrical_series_data.shape}')
+            raise
 
     def get_traces_try(self, start_frame, end_frame, channel_indices):
         if start_frame is None:
